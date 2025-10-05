@@ -1,4 +1,5 @@
 import  numpy as np
+import matplotlib.pyplot as plt
 
 a = np.array([1,2,3,4]) #Wektor
 b = np.matrix([[1,2],[3,4]]) #Macierz 
@@ -55,12 +56,36 @@ print(findMinMax([1, 1, -129, 171, 1620], -46, 14, 0.1))
 
 #4.2
 def betterFindMinMax(x, xMin, xMax, step):
+    t = np.linspace(xMin, xMax, int(((xMax-xMin)/step)+1))
     y=[]
-    for i in np.linspace(xMin, xMax, int(((xMax-xMin)/step)+1)):
+    for i in t:
         val = 0
         for j in range(len(x)):
             val += x[j]*i**(len(x)-1-j)
         y.append(float(val))
-    return [min(y), max(y)]
+
+    yMin = y[0]
+    yMax = y[0]
+    tMin = t[0]
+    tMax = t[0]
+    for i in range(len(y)):
+        if y[i]>yMax:
+            yMax=y[i]
+            tMax=float(t[i])
+        if y[i]<yMin:
+            yMin=y[i]
+            tMin=float(t[i])
+
+    plt.plot(t, y, label="Przebieg funkcji", color="black", linewidth=2)
+    plt.scatter(tMin, yMin, color="blue", s=100, label="Minimum")
+    plt.scatter(tMax, yMax, color="red", s=100, label="Maksimum")
+
+    plt.xlabel("Oś X")
+    plt.ylabel("Oś Y")
+    plt.title("Wykres funkcji")
+    plt.grid(True)
+    plt.legend()
+    plt.show()
+    return [yMin, yMax]
 
 print(betterFindMinMax([1, 1, -129, 171, 1620], -46, 14, 0.1))
