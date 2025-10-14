@@ -1,6 +1,36 @@
 import  numpy as np
 import matplotlib.pyplot as plt
 
+#Na labach
+#2.1
+#print(3**12-5)
+
+a = np.array([2, 0.5])
+b = np.matrix([[1, 4],[-1, 3]])
+c = np.array([-1, -3])
+#print(a @ b @ c)
+
+A = np.matrix([[1,-2,0],[-2,4,0],[2,-1,7]])
+#print(np.linalg.matrix_rank(A))
+
+A = np.matrix([[1,2],[-1,0]])
+b = np.array([[-1],[2]])
+#print(np.linalg.solve(A,b))
+
+#2.2
+w = np.array([1,1,-129,171,1620])
+
+def wartoscWielomianu(w,x):
+    y=0
+    for i in range(len(w)):
+        y += w[i]*x**(len(w)-i-1)
+    return y
+
+#print(wartoscWielomianu(w, -46))
+#print(wartoscWielomianu(w, 14))
+
+#W domu
+
 a = np.array([1,2,3,4]) #Wektor
 b = np.matrix([[1,2],[3,4]]) #Macierz 
 
