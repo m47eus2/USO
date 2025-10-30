@@ -17,12 +17,14 @@ def simulation(A,B,C, controlls, titles, labels):
     t = np.linspace(0,10,500)
     for i in range(len(controlls)):
         plt.figure()
+        plt.grid()
         plt.title(titles[i])
         u = np.array([controlls[i](j) for j in t])
         tout, yout, xout = signal.lsim(sys, U=u, T=t)
         plt.plot(tout, xout, label=labels)
+        plt.plot(tout, yout, label="y")
         plt.legend()
-    plt.show()
+    
 
 def posacSterowalna(A,B,C):
     D = np.array([[0]])
@@ -50,15 +52,20 @@ C = np.array([[1,0]])
 
 #Ukl 2
 A = np.array([[-1,0,0],[0,-0.5,0],[0,0,-1.0/3]])
+K = np.array([[9.83,16,6.17]])
 B = np.array([[1],[0.5],[1.0/3]])
+noweA = A-(B @ K)
+noweB = np.array([[0],[0],[0]])
 C = np.array([[1,0,0]])
+simulation(noweA, noweB, C, [ones], ["Nowy układ"], ["x1","x2","x3"])
+
 #kalmanMatrix(A,B)
-#simulation(A,B,C,[ones,doubleOnes,sinsub05],["Przebieg stanu dla u=1(t)","Przebieg stanu dla u=2(t)","Przebieg stanu dla u=sin(t)-1/2"], ["x1","x2","x3"])
-sys = posacSterowalna(A,B,C)
-print(sys.A)
-print(sys.B)
-print(sys.C)
-simulation(sys.A, sys.B, sys.C,[ones,doubleOnes,sinsub05],["Przebieg stanu dla u=1(t)","Przebieg stanu dla u=2(t)","Przebieg stanu dla u=sin(t)-1/2"], ["x1","x2","x3"])
+#simulation(A,B,C,[doubleOnes],["Przebieg stanu dla u=1(t)","Przebieg stanu dla u=2(t)","Przebieg stanu dla u=sin(t)-1/2"], ["x1","x2","x3"])
+#sys = posacSterowalna(A,B,C)
+#print(sys.A)
+#print(sys.B)
+#print(sys.C)
+#simulation(sys.A, sys.B, sys.C,[doubleOnes],["Przebieg stanu dla u=1(t)","Przebieg stanu dla u=2(t)","Przebieg stanu dla u=sin(t)-1/2"], ["x1","x2","x3"])
 
 #Ukl 3
 A = np.array([[0,10.0,0,0],[-10,-10,0,-10],[0,0,0,10],[0,-10,-10,-10]])
@@ -73,3 +80,14 @@ B = np.array([[2.0],[0],[0]])
 C = np.array([[1.0,0,0]])
 #kalmanMatrix(A,B)
 #simulation(A,B,C,[ones,doubleOnes,sinsub05],["Przebieg stanu dla u=1(t)","Przebieg stanu dla u=2(t)","Przebieg stanu dla u=sin(t)-1/2"], ["x1","x2","x3"])
+
+#Ukl 2 z lokowaniem biegunów
+#A = np.array([[0,1,0],[0,0,1],[-10,-17,-8]])
+#B = np.array([[0,0,0]])
+#C = sys.C
+
+
+
+
+
+plt.show()
