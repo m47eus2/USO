@@ -48,7 +48,7 @@ A = np.array([[-0.5, 0],[0, -0.5]])
 B = np.array([[0.5],[0.5]])
 C = np.array([[1,0]])
 #kalmanMatrix(A,B)
-#simulation(A,B,C,[ones,doubleOnes,sinsub05],["Przebieg stanu dla u=1(t)","Przebieg stanu dla u=2(t)","Przebieg stanu dla u=sin(t)-1/2"], ["x1","x2"])
+#simulation(A,B,C, [0,0],[ones,doubleOnes,sinsub05],["Przebieg stanu dla u=1(t)","Przebieg stanu dla u=2(t)","Przebieg stanu dla u=sin(t)-1/2"], ["x1","x2"])
 
 #Ukl 2
 A = np.array([[-1,0,0],[0,-0.5,0],[0,0,-1.0/3]])
@@ -57,37 +57,29 @@ B = np.array([[1],[0.5],[1.0/3]])
 noweA = A-(B @ K)
 noweB = np.array([[0],[0],[0]])
 C = np.array([[1,0,0]])
+
 simulation(noweA, noweB, C, [10,20,5], [ones], ["Nowy układ"], ["x1","x2","x3"])
 
 #kalmanMatrix(A,B)
-#simulation(A,B,C,[doubleOnes],["Przebieg stanu dla u=1(t)","Przebieg stanu dla u=2(t)","Przebieg stanu dla u=sin(t)-1/2"], ["x1","x2","x3"])
-#sys = posacSterowalna(A,B,C)
+#simulation(A,B,C,[0,0,0],[doubleOnes],["Przebieg stanu dla u=1(t)","Przebieg stanu dla u=2(t)","Przebieg stanu dla u=sin(t)-1/2"], ["x1","x2","x3"])
+sys = posacSterowalna(A,B,C)
 #print(sys.A)
 #print(sys.B)
 #print(sys.C)
-#simulation(sys.A, sys.B, sys.C,[doubleOnes],["Przebieg stanu dla u=1(t)","Przebieg stanu dla u=2(t)","Przebieg stanu dla u=sin(t)-1/2"], ["x1","x2","x3"])
+#simulation(sys.A, sys.B, sys.C,[0,0,0],[doubleOnes],["Przebieg stanu dla u=1(t)","Przebieg stanu dla u=2(t)","Przebieg stanu dla u=sin(t)-1/2"], ["x1","x2","x3"])
 
 #Ukl 3
 A = np.array([[0,10.0,0,0],[-10,-10,0,-10],[0,0,0,10],[0,-10,-10,-10]])
 B = np.array([[0],[10.0],[0],[10]])
 C = np.array([[1,0,0,0]])
 #kalmanMatrix(A,B)
-#simulation(A,B,C,[ones,doubleOnes,sinsub05],["Przebieg stanu dla u=1(t)","Przebieg stanu dla u=2(t)","Przebieg stanu dla u=sin(t)-1/2"], ["x1","x2","x3","x4"])
+#simulation(A,B,C,[0,0,0,0],[ones,doubleOnes,sinsub05],["Przebieg stanu dla u=1(t)","Przebieg stanu dla u=2(t)","Przebieg stanu dla u=sin(t)-1/2"], ["x1","x2","x3","x4"])
 
 #Ukl 4
 A = np.array([[-4,0,-2],[0,0,1],[0.5,-0.5,-0.5]])
 B = np.array([[2.0],[0],[0]])
 C = np.array([[1.0,0,0]])
 #kalmanMatrix(A,B)
-#simulation(A,B,C,[ones,doubleOnes,sinsub05],["Przebieg stanu dla u=1(t)","Przebieg stanu dla u=2(t)","Przebieg stanu dla u=sin(t)-1/2"], ["x1","x2","x3"])
-
-#Ukl 2 z lokowaniem biegunów
-#A = np.array([[0,1,0],[0,0,1],[-10,-17,-8]])
-#B = np.array([[0,0,0]])
-#C = sys.C
-
-
-
-
+#simulation(A,B,C,[0,0,0],[ones,doubleOnes,sinsub05],["Przebieg stanu dla u=1(t)","Przebieg stanu dla u=2(t)","Przebieg stanu dla u=sin(t)-1/2"], ["x1","x2","x3"])
 
 plt.show()
