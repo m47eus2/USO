@@ -1,35 +1,12 @@
 import numpy as np
 import matplotlib.pyplot as plt
-
-class regulatorP:
-    def __init__(self):
-        self.yd = 1
-        self.kp = 20
-
-    def calcU(self, y, dt):
-        e = self.yd - y
-        u = self.kp*e
-        return u
-    
-class regulatorPI:
-    def __init__(self):
-        self.yd = 1
-        self.kp = 10
-        self.ki = 7
-        self.eAccum = 0
-    
-    def calcU(self, y, dt):
-        e = self.yd - y
-        self.eAccum += e*dt
-        u = self.kp*e + self.ki*self.eAccum
-        return u
     
 class regulatorPID:
-    def __init__(self):
-        self.yd = 1
-        self.kp = 10
-        self.ki = 10
-        self.kd = 7
+    def __init__(self,yd,kp,ki,kd):
+        self.yd = yd
+        self.kp = kp
+        self.ki = ki
+        self.kd = kd
         self.eAccum = 0
         self.ePrev = 0
 
@@ -40,7 +17,7 @@ class regulatorPID:
         self.ePrev = e
         return u
 
-def simulate(A,B,C,Tend,regulator):
+def simulate(title,A,B,C,Tend,regulator):
     dt = 0.001
     T = Tend
     N = int(T/dt)
@@ -64,7 +41,6 @@ def simulate(A,B,C,Tend,regulator):
         t_list.append(t)
         y_list.append(y)
         u_list.append(u)
-    
     return [t_list, y_list]
 
 # Obiekt
@@ -78,23 +54,39 @@ A = np.array([[-R1/L1, 0, -1/L1],[0, -R2/L2, 1/L2],[1/C1, -1/C1, 0]])
 B = np.array([[1/L1],[0],[0]])
 C = np.array([[0, 1, 0]])
 
-retP = simulate(A,B,C,20,regulatorP())
-retPI = simulate(A,B,C,20,regulatorPI())
-retPID= simulate(A,B,C,20,regulatorPID())
+# Strojenie empiryczne
+retP = simulate("Regulator P", A,B,C,20,regulatorPID(1,10,0,0))
+retPI = simulate("Regulator PI", A,B,C,20,regulatorPID(1,10,8,0))
+retPID = simulate("Regulator PID", A,B,C,20,regulatorPID(1,10,10,7))
+
+# Strojenie metodą Zieglera-Nicholsa
+ku = 74.5
+Tu = 3.35-1.719
+
+regulatorP_ZN = regulatorPID(1,0.5*ku,0,0)
+regulatorPI_ZN = regulatorPID(1,0.45*ku, 0.54*ku*(1/Tu), 0)
+regulatorPD_ZN = regulatorPID(1,0.8*ku, 0, 0.1*ku*Tu)
+regualtorPID_ZN = regulatorPID(1,0.6*ku, 1.2*ku*(1/Tu), 0.075*ku*Tu)
+
+retP_ZG = simulate("Regulator P ZN", A,B,C,20,regulatorP_ZN)
+retPI_ZG = simulate("Regulator PI ZN", A,B,C,20,regulatorPI_ZN)
+retPD_ZG = simulate("Regulator PD ZN", A,B,C,20,regulatorPD_ZN)
+retPID_ZG = simulate("Regulator PID ZN", A,B,C,20,regualtorPID_ZN)
 
 plt.figure()
-plt.title("Regulator P")
-plt.plot(*retP)
+plt.title("Nastawy dobrane empirycznie")
+plt.plot(*retP, label="P")
+plt.plot(*retPI, label="PI")
+plt.plot(*retPID, label="PID")
+plt.legend()
 plt.grid()
 
 plt.figure()
-plt.title("Regulator PI")
-plt.plot(*retPI)
+plt.title("Strojenie metodą Zieglera-Nicholsa")
+plt.plot(*retP_ZG, label="P")
+plt.plot(*retPI_ZG, label="PI")
+plt.plot(*retPD_ZG, label="PD")
+plt.plot(*retPID_ZG, label="PID")
+plt.legend()
 plt.grid()
-
-plt.figure()
-plt.title("Regulator PID")
-plt.plot(*retPID)
-plt.grid()
-
 plt.show()
