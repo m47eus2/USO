@@ -45,7 +45,7 @@ class Itae:
     def __init__(self):
         self.value = 0
     def update(self, t, e, dt):
-        self.value += t*abs(e)*dt
+        self.value += (t*abs(e))*dt
     def getValue(self):
         return self.value 
 
@@ -98,6 +98,9 @@ C = np.array([[0, 1, 0]])
 retP = simulate("Regulator P", A,B,C,20,regulatorPID(1,10,0,0))
 retPI = simulate("Regulator PI", A,B,C,20,regulatorPID(1,10,8,0))
 retPID = simulate("Regulator PID", A,B,C,20,regulatorPID(1,10,10,7))
+
+print()
+print("Wskaźniki jakości        e^2        t*e^2        |e|        t|e|")
 
 print()
 print(f"Wskaźniki jakości dla P: {retP[2]}")
