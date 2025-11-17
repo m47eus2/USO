@@ -15,7 +15,39 @@ class regulatorPID:
         self.eAccum += e*dt
         u = self.kp*e + self.ki*self.eAccum + self.kd*((e - self.ePrev)/dt)
         self.ePrev = e
-        return u
+        return [u,e]
+
+class Ise:
+    def __init__(self):
+        self.value = 0
+    def update(self, t, e, dt):
+        self.value += (e**2)*dt
+    def getValue(self):
+        return self.value
+
+class Itse:
+    def __init__(self):
+        self.value = 0
+    def update(self, t, e, dt):
+        self.value += (t*e**2)*dt
+    def getValue(self):
+        return self.value
+
+class Iae:
+    def __init__(self):
+        self.value = 0
+    def update(self, t, e, dt):
+        self.value += abs(e)*dt
+    def getValue(self):
+        return self.value
+
+class Itae:
+    def __init__(self):
+        self.value = 0
+    def update(self, t, e, dt):
+        self.value += t*abs(e)*dt
+    def getValue(self):
+        return self.value 
 
 def simulate(title,A,B,C,Tend,regulator):
     dt = 0.001
@@ -27,21 +59,29 @@ def simulate(title,A,B,C,Tend,regulator):
     y_list = []
     u_list = []
 
+    integrals = [Ise(), Itse(), Iae(), Itae()]
+
     for k in range(N):
         t = k * dt
 
         y = float((C @ x)[0])
 
-        u = regulator.calcU(y, dt)
+        u,e = regulator.calcU(y, dt)
 
         # Obiekt
         dx = A @ x + B.flatten() * u
         x = x + dt * dx
 
+        # Wskaźniki jakości
+        for integral in integrals:
+            integral.update(t,e,dt)
+
         t_list.append(t)
         y_list.append(y)
         u_list.append(u)
-    return [t_list, y_list]
+
+    integralsValues = [integral.getValue() for integral in integrals]
+    return [t_list, y_list, integralsValues]
 
 # Obiekt
 R1 = 2
@@ -59,6 +99,11 @@ retP = simulate("Regulator P", A,B,C,20,regulatorPID(1,10,0,0))
 retPI = simulate("Regulator PI", A,B,C,20,regulatorPID(1,10,8,0))
 retPID = simulate("Regulator PID", A,B,C,20,regulatorPID(1,10,10,7))
 
+print()
+print(f"Wskaźniki jakości dla P: {retP[2]}")
+print(f"Wskaźniki jakości dla PI: {retPI[2]}")
+print(f"Wskaźniki jakości dla PID: {retPID[2]}")
+
 # Strojenie metodą Zieglera-Nicholsa
 ku = 74.5
 Tu = 3.35-1.719
@@ -73,20 +118,25 @@ retPI_ZG = simulate("Regulator PI ZN", A,B,C,20,regulatorPI_ZN)
 retPD_ZG = simulate("Regulator PD ZN", A,B,C,20,regulatorPD_ZN)
 retPID_ZG = simulate("Regulator PID ZN", A,B,C,20,regualtorPID_ZN)
 
+print()
+print(f"Wskaźniki jakości dla P (ZG): {retP_ZG[2]}")
+print(f"Wskaźniki jakości dla PI (ZG): {retPI_ZG[2]}")
+print(f"Wskaźniki jakości dla PID (ZG): {retPID_ZG[2]}")
+
 plt.figure()
 plt.title("Nastawy dobrane empirycznie")
-plt.plot(*retP, label="P")
-plt.plot(*retPI, label="PI")
-plt.plot(*retPID, label="PID")
+plt.plot(retP[0],retP[1], label="P")
+plt.plot(retPI[0],retPI[1], label="PI")
+plt.plot(retPID[0],retPID[1], label="PID")
 plt.legend()
 plt.grid()
 
 plt.figure()
 plt.title("Strojenie metodą Zieglera-Nicholsa")
-plt.plot(*retP_ZG, label="P")
-plt.plot(*retPI_ZG, label="PI")
-plt.plot(*retPD_ZG, label="PD")
-plt.plot(*retPID_ZG, label="PID")
+plt.plot(retP_ZG[0],retP_ZG[1], label="P")
+plt.plot(retPI_ZG[0],retPI_ZG[1], label="PI")
+plt.plot(retPD_ZG[0],retPD_ZG[1], label="PD")
+plt.plot(retPID_ZG[0],retPID_ZG[1], label="PID")
 plt.legend()
 plt.grid()
 plt.show()
