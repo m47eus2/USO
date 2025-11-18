@@ -91,6 +91,7 @@ def simulate(A,B,C,Tend,regulator):
         u_list.append(u)
 
     integralsValues = [integral.getValue() for integral in integrals]
+    integralsValues = [round(value,6) for value in integralsValues]
     return [t_list, y_list, integralsValues]
 
 # Obiekt
@@ -143,6 +144,7 @@ retPIDitae = simulate(A,B,C,5,regulatorPID(1,49,52,35))
 retPIDiopt1 = simulate(A,B,C,5,regulatorPID(1,0,0,0))
 retPIDiopt2 = simulate(A,B,C,5,regulatorPID(1,6,1,0))
 
+print()
 print(f"Wskaźniki jakości dla PIDise: {retPIDise[2]}")
 print(f"Wskaźniki jakości dla PIDitse: {retPIDitse[2]}")
 print(f"Wskaźniki jakości dla PIDiae: {retPIDiae[2]}")
@@ -176,6 +178,11 @@ plt.plot(retPIDitae[0],retPIDitae[1], label="PID-itae")
 plt.plot(retPIDiopt1[0],retPIDiopt1[1], label="PID-opt1")
 plt.plot(retPIDiopt2[0],retPIDiopt2[1], label="PID-opt2")
 plt.legend()
+plt.grid()
+
+plt.figure()
+plt.title("Minimalizacja Itae")
+plt.plot(retPIDitae[0],retPIDitae[1])
 plt.grid()
 
 plt.show()
