@@ -3,12 +3,12 @@ from scipy.integrate import odeint
 from scipy import linalg
 import matplotlib.pyplot as plt
 
-R = 0.5
-C = 0.5
-L = 0.2
+r = 0.5
+c = 0.5
+l = 0.2
 
-A = np.array([[0,1],[-1/(L*C), -R/L]])
-B = np.array([[0],[1/L]])
+A = np.array([[0,1],[-1/(l*c), -r/l]])
+B = np.array([[0],[1/l]])
 C = np.array([[1, 0]])
 
 Q = np.eye(2)
@@ -18,11 +18,19 @@ P = linalg.solve_continuous_are(A,B,Q,R)
 
 K = (1/R)* (B.T @ P)
 
+qd = 5
+xd = np.array([qd, 0]).T
+uc = qd/C
+
+
 def model(xExt,t):
     x = xExt[:2]
     J = xExt[2]
 
-    u = -K @ x
+    e = xd - x
+    ue = -K @ e
+    u = -ue + qd/c 
+
     dx = A @ x + B.flatten() * u
     dJ = x @ Q @ x + u * R
 
