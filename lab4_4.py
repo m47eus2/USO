@@ -5,10 +5,10 @@ import matplotlib.pyplot as plt
 m = GEKKO(remote=False)
 m.options.IMODE=6
 
-m.time = np.linspace(0,1,101)
+m.time = np.linspace(0,1,201)
 t = m.Param(value=m.time)
 
-x = m.Var(value=0)
+x = m.Var(value=1)
 m.fix_initial(x, val=1)
 m.fix_final(x, val=3)
 
@@ -22,7 +22,14 @@ m.Connection(Jf, J, pos2='end')
 m.Obj(Jf)
 
 m.solve(disp=False)
-print(f"x = {x.VALUE}")
+#print(f"x = {x.VALUE}")
 
-plt.plot(m.time, x.VALUE)
+x2 = [tt**3+tt+1 for tt in m.time]
+
+plt.title("Rozwiązanie problemu optymalizacji dynamicznej")
+plt.grid()
+plt.plot(m.time, x.VALUE, label="GEKKO")
+plt.plot(t, x2, "--", label="Analityczne")
+plt.legend()
+plt.savefig("lab4_4.pdf", format = 'pdf')
 plt.show()
