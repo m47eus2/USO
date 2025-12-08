@@ -69,7 +69,7 @@ def simulate(A,B,C,Tend,regulator):
     y_list = []
     u_list = []
 
-    integral = Itae()
+    integral = Itse()
 
     for k in range(N):
         t = k * dt
@@ -102,19 +102,21 @@ A = np.array([[-R1/L1, 0, -1/L1],[0, -R2/L2, 1/L2],[1/C1, -1/C1, 0]])
 B = np.array([[1/L1],[0],[0]])
 C = np.array([[0, 1, 0]])
 
-# Obliczenia zgrubne
+# Przeszukiwanie zgrubne
+settingMax = 150
 
+# Symulacje odpowiedzi układu
 data = []
-for p in range(0,151,5):
-    print(f"{(p/150)*100}%")
-    for i in range(0,151,5):
-        for d in range(0,151,5):
+for p in range(0,settingMax+1,5):
+    print(f"{(p/settingMax)*100}%")
+    for i in range(0,settingMax+1,5):
+        for d in range(0,settingMax+1,5):
             ret = simulate(A,B,C,5,regulatorPID(1,p,i,d))
             data.append([p, i, d, ret[2]])
 
+# Poszukiwanie nastaw dla minimalneej wartości wskaźnika
 minIdx = 0
 minVal = data[0][3]
-
 for i in range(len(data)):
     if data[i][3]<minVal:
         minIdx = i
@@ -123,11 +125,21 @@ for i in range(len(data)):
 pAprox = data[minIdx][0]
 iAprox = data[minIdx][1]
 dAprox = data[minIdx][2]
-
 print(f"{minVal} P={pAprox} I={iAprox} D={dAprox}")
+
+# plt.figure()
+# plt.title("Przeszukiwanie zgrubne")
+# plt.xlabel("Iteracje []")
+# plt.ylabel("Itse []")
+# plt.grid()
+# plt.ylim(0.005,0.04)
+# plt.scatter(minIdx, minVal, color="red", s=100, label="Minimum")
+# plt.plot([row[3] for row in data], label="Wartość wskaźnika")
+# plt.legend()
 
 # Obliczenia dokładne
 
+# Sumulacje odpowiedzi układu
 data = []
 for p in range(pAprox-10, pAprox+11):
     print(f"{(p-(pAprox-10))/20*100}%")
@@ -136,9 +148,9 @@ for p in range(pAprox-10, pAprox+11):
             ret = simulate(A,B,C,5,regulatorPID(1,p,i,d))
             data.append([p, i, d, ret[2]])
 
+# Poszukiwanie nastaw dla minimalnej wartości wskaźnika
 minIdx = 0
 minVal = data[0][3]
-
 for i in range(len(data)):
     if data[i][3]<minVal:
         minIdx = i
@@ -148,6 +160,19 @@ pPrec = data[minIdx][0]
 iPrec = data[minIdx][1]
 dPrec = data[minIdx][2]
 print(f"{minVal} P={pPrec} I={iPrec} D={dPrec}")
+
+# plt.figure()
+# plt.title("Przeszukiwanie dokładne")
+# plt.xlabel("Iteracje []")
+# plt.ylabel("Itse []")
+# plt.grid()
+# plt.ylim(0.01,0.013)
+# plt.scatter(minIdx, minVal, color="red", s=100, label="Minimum")
+# plt.plot([row[3] for row in data], label="Wartość wskaźnika")
+# plt.legend()
+
+# plt.savefig("lab5_3_2_1.pdf", format = 'pdf')
+# plt.show()
 
 # Ise:              0.10694434590319338 P=31 I=114 D=86
 # Itse:             0.010237090222675204 P=53 I=70 D=53
