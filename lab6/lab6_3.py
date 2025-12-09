@@ -70,7 +70,7 @@ def model(xExt,ti):
 
 t = np.linspace(0,tend,201)
 
-xExt = odeint(model, [0,1,0], t, rtol=1e-10)
+xExt = odeint(model, [1,1,0], t, rtol=1e-10)
 x = xExt[:,:2]
 J = xExt[:,2]
 print(f"J = {J[-1]}")

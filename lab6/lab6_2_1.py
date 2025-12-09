@@ -26,7 +26,10 @@ y = C @ x.T
 y = y.T
 
 plt.title("Stan układu dla wymuszenia skokowego")
+plt.xlabel("t [s]")
+plt.ylabel("h(t) []")
 plt.grid()
 plt.plot(t,x[:,0])
 plt.plot(t,x[:,1])
+plt.savefig("lab7_2_2.pdf", format = 'pdf')
 plt.show()
