@@ -1,8 +1,8 @@
 import numpy as np
 from scipy.integrate import odeint
-from scipy.interpolate import interp1d
 from scipy import linalg
 import matplotlib.pyplot as plt
+from scipy.interpolate import interp1d
 
 R = 0.5
 C = 0.5
@@ -14,8 +14,45 @@ C = np.array([[1, 0]])
 
 Q = np.eye(2)
 R = 1
+tend = 1
 
-tend = 5.0
+# Nieskończony horyzont czasowy
+
+P = linalg.solve_continuous_are(A,B,Q,R)
+
+K = (1/R)* (B.T @ P)
+print(K)
+
+def model(xExt,t):
+    x = xExt[:2]
+    J = xExt[2]
+
+    u = -K @ x
+    dx = A @ x + B.flatten() * u
+    dJ = x @ Q @ x + u * R
+
+    return np.hstack((dx, dJ))
+
+t = np.linspace(0,tend,201)
+
+xExt = odeint(model, [1,1,0], t, rtol=1e-10)
+x = xExt[:,:2]
+J = xExt[:,2]
+print(f"J = {J[-1]}")
+
+u = - (K @ x.T).T
+y = C @ x.T
+y = y.T
+
+plt.figure()
+plt.title("Porównanie odpowiedzi układu z regulatorami LQR dla t1=1s")
+plt.xlabel("t [s]")
+plt.ylabel("x(t) []")
+plt.grid()
+plt.plot(t,x[:,0], label="x1 (t1=inf)")
+plt.plot(t,x[:,1], label="x2 (t1=inf)")
+
+# Skończony horyzont czasowy
 
 def riccati(p, t):
     P = p.reshape((2,2))
@@ -27,7 +64,7 @@ N = 201
 
 tBack = np.linspace(t1, 0, N)
 
-Pfinal = (np.eye(2)*1).flatten()
+Pfinal = (np.eye(2)*100).flatten()
 
 PBack = odeint(riccati, Pfinal, tBack, rtol=1e-10)
 
@@ -35,18 +72,6 @@ t = tBack[::-1]
 Pforward = PBack[::-1]
 
 Pt = Pforward.reshape((-1,2,2))
-
-plt.figure()
-plt.grid()
-plt.title("Przebieg elementów macierzy P w czasie")
-plt.xlabel("t [s]")
-plt.ylabel("P(t) []")
-plt.plot(t, Pt[:,0,0], label="p11")
-plt.plot(t, Pt[:,0,1], label="p12")
-plt.plot(t, Pt[:,1,0], "--", label="p21")
-plt.plot(t, Pt[:,1,1], label="p22")
-plt.legend()
-plt.savefig("lab7_3_2.pdf", format = 'pdf')
 
 P11 = interp1d(t, Pt[:,0,0], fill_value='extrapolate')
 P12 = interp1d(t, Pt[:,0,1], fill_value='extrapolate')
@@ -79,10 +104,9 @@ print(f"J = {J[-1]}")
 y = C @ x.T
 y = y.T
 
-plt.figure()
-plt.title("Stan układu")
-plt.grid()
-plt.plot(t,x[:,0], label="x1")
-plt.plot(t,x[:,1], label="x2")
+
+plt.plot(t,x[:,0], "--", label="x1 (t1=1)")
+plt.plot(t,x[:,1], "--", label="x2 (t1=1)")
 plt.legend()
+#plt.savefig("lab7_3_4_1.pdf", format = 'pdf')
 plt.show()
