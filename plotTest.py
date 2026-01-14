@@ -98,4 +98,5 @@ plt.plot(omega_1200, M_fit_1200, "--", label=f"Regresja: M = {a_1200:.3f}·ω + 
 plt.legend()
 plt.tight_layout()
 
+#plt.savefig('Charakterystyka_M_omega.pdf')
 plt.show()
